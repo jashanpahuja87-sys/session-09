@@ -1,55 +1,91 @@
-const themeToggle = document.getElementById("themeToggle");
+/* =========================
+   DARK / LIGHT THEME
+========================= */
 
-const savedTheme = localStorage.getItem("theme");
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+
+const savedTheme = localStorage.getItem("jashan-theme");
 
 if (savedTheme === "light") {
-  document.body.classList.add("light-theme");
-  themeToggle.textContent = "☀";
+  document.body.classList.add("light");
+  themeIcon.textContent = "☀";
 } else {
-  themeToggle.textContent = "☾";
+  themeIcon.textContent = "☾";
 }
+
 
 themeToggle.addEventListener("click", () => {
 
-  document.body.classList.toggle("light-theme");
+  document.body.classList.toggle("light");
 
-  const isLight = document.body.classList.contains("light-theme");
+  const isLight = document.body.classList.contains("light");
 
   if (isLight) {
-    themeToggle.textContent = "☀";
-    localStorage.setItem("theme", "light");
+
+    themeIcon.textContent = "☀";
+
+    localStorage.setItem(
+      "jashan-theme",
+      "light"
+    );
+
   } else {
-    themeToggle.textContent = "☾";
-    localStorage.setItem("theme", "dark");
+
+    themeIcon.textContent = "☾";
+
+    localStorage.setItem(
+      "jashan-theme",
+      "dark"
+    );
+
   }
 
 });
 
 
-// Navbar shadow on scroll
+/* =========================
+   NAVBAR
+========================= */
 
 const navbar = document.querySelector(".navbar");
 
 window.addEventListener("scroll", () => {
 
-  if (window.scrollY > 20) {
-    navbar.style.background = "color-mix(in srgb, var(--bg) 85%, transparent)";
-    navbar.style.backdropFilter = "blur(15px)";
+  if (window.scrollY > 30) {
+
     navbar.style.position = "sticky";
     navbar.style.top = "0";
-    navbar.style.zIndex = "100";
+
+    navbar.style.backdropFilter = "blur(18px)";
+
+    navbar.style.background =
+      "color-mix(in srgb, var(--bg) 82%, transparent)";
+
+    navbar.style.borderBottom =
+      "1px solid var(--border)";
+
   } else {
-    navbar.style.background = "transparent";
+
+    navbar.style.position = "relative";
+
     navbar.style.backdropFilter = "none";
+
+    navbar.style.background = "transparent";
+
+    navbar.style.borderBottom = "none";
+
   }
 
 });
 
 
-// Smooth reveal animation
+/* =========================
+   SCROLL REVEAL
+========================= */
 
 const revealElements = document.querySelectorAll(
-  ".section, .service-card, .project-card, .detail-card"
+  ".section, .service-card, .project, .technology, .contact"
 );
 
 const observer = new IntersectionObserver(
@@ -58,9 +94,11 @@ const observer = new IntersectionObserver(
     entries.forEach((entry) => {
 
       if (entry.isIntersecting) {
-        entry.target.style.opacity = "1";
-        entry.target.style.transform = "translateY(0)";
+
+        entry.target.classList.add("visible");
+
         observer.unobserve(entry.target);
+
       }
 
     });
@@ -71,39 +109,161 @@ const observer = new IntersectionObserver(
   }
 );
 
+
 revealElements.forEach((element) => {
 
   element.style.opacity = "0";
-  element.style.transform = "translateY(25px)";
+
+  element.style.transform = "translateY(30px)";
+
   element.style.transition =
-    "opacity 0.7s ease, transform 0.7s ease";
+    "opacity 0.8s ease, transform 0.8s ease";
 
   observer.observe(element);
 
 });
 
 
-// Project card interaction
+const revealStyle = document.createElement("style");
 
-document.querySelectorAll(".project-card").forEach((card) => {
+revealStyle.textContent = `
+  .visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+`;
 
-  card.addEventListener("mousemove", (event) => {
+document.head.appendChild(revealStyle);
 
-    const rect = card.getBoundingClientRect();
 
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+/* =========================
+   PROJECT 3D HOVER
+========================= */
 
-    const rotateX = ((y / rect.height) - 0.5) * -4;
-    const rotateY = ((x / rect.width) - 0.5) * 4;
+const projects = document.querySelectorAll(".project");
 
-    card.style.transform =
-      `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+projects.forEach((project) => {
+
+  project.addEventListener("mousemove", (event) => {
+
+    const rect = project.getBoundingClientRect();
+
+    const x =
+      (event.clientX - rect.left) / rect.width;
+
+    const y =
+      (event.clientY - rect.top) / rect.height;
+
+    const rotateX = (y - 0.5) * -4;
+    const rotateY = (x - 0.5) * 4;
+
+    project.style.transform =
+      `perspective(1000px)
+       rotateX(${rotateX}deg)
+       rotateY(${rotateY}deg)
+       translateY(-6px)`;
 
   });
 
-  card.addEventListener("mouseleave", () => {
-    card.style.transform = "";
+
+  project.addEventListener("mouseleave", () => {
+
+    project.style.transform = "";
+
+  });
+
+});
+
+
+/* =========================
+   AI ORB INTERACTION
+========================= */
+
+const aiCard = document.querySelector(".ai-card");
+
+aiCard.addEventListener("mousemove", (event) => {
+
+  const rect = aiCard.getBoundingClientRect();
+
+  const x =
+    (event.clientX - rect.left) / rect.width;
+
+  const y =
+    (event.clientY - rect.top) / rect.height;
+
+  const moveX = (x - 0.5) * 15;
+  const moveY = (y - 0.5) * 15;
+
+  aiCard.style.transform =
+    `perspective(1000px)
+     rotateX(${moveY * -0.4}deg)
+     rotateY(${moveX * 0.4}deg)`;
+
+});
+
+
+aiCard.addEventListener("mouseleave", () => {
+
+  aiCard.style.transform = "";
+
+});
+
+
+/* =========================
+   ACTIVE NAV LINK
+========================= */
+
+const sections = document.querySelectorAll("section[id]");
+const navLinks = document.querySelectorAll(".navbar nav a");
+
+window.addEventListener("scroll", () => {
+
+  let current = "";
+
+  sections.forEach((section) => {
+
+    const sectionTop =
+      section.offsetTop - 180;
+
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute("id");
+    }
+
+  });
+
+
+  navLinks.forEach((link) => {
+
+    link.style.color = "";
+
+    if (
+      link.getAttribute("href") === `#${current}`
+    ) {
+      link.style.color = "var(--text)";
+    }
+
+  });
+
+});
+
+
+/* =========================
+   EMAIL BUTTON
+========================= */
+
+const contactButtons =
+  document.querySelectorAll(
+    'a[href^="mailto:"]'
+  );
+
+contactButtons.forEach((button) => {
+
+  button.addEventListener("click", () => {
+
+    console.log(
+      "Starting conversation with Jashan Pahuja..."
+    );
+
   });
 
 });
